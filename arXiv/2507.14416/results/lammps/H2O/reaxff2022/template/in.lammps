@@ -1,0 +1,210 @@
+newton on
+units        real
+boundary p p p
+atom_style full
+pair_style reaxff NULL safezone 3.0 mincap 150
+neighbor 1.0 bin
+neigh_modify delay 1
+
+variable random_seed equal 45585
+variable water_ratio equal 0.5
+
+lattice sc 3.5457453644044783
+region box block -30 30 -30 30 -30 30 units box
+create_box 2 box
+
+mass 1 15.9994
+mass 2 1.008
+
+pair_coeff * * ./potentials/ReaxFF2022.reaxff O H
+fix myqeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff maxiter 400
+
+molecule water ./data/tip3p.mol
+create_atoms 0 region box mol water ${random_seed} ratio ${water_ratio} ${random_seed}
+
+# Output
+write_data ./results/initial_structure.data
+
+#
+#	ENERGY MINIMIZATION
+#
+variable etol        equal 0.0
+variable ftol        equal 1
+variable maxiter     equal 10000
+variable thermo_iter equal floor(${maxiter}/100)
+variable maxeval     equal 100000
+
+
+# monitoring "fnorm" during minimization
+thermo ${thermo_iter}
+thermo_style custom step temp pe etotal press fnorm
+thermo_modify norm no
+
+# atoms only
+min_style cg
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+write_data ./results/structure_relaxed_atoms.data
+
+variable init_temperature  equal 50.0
+variable temperature       equal 250.0
+variable delta_temperature equal  50.0
+variable final_temperature equal 320.0
+
+variable init_pressure    equal 0
+variable pressure         equal 1
+
+# time in fs
+variable time_npt_heating equal   20000
+variable time_nvt_eq      equal   20000
+variable time_nvt_prod    equal   10000
+variable time_nvt_phonon  equal   50000
+variable time_cooling     equal   10000
+
+variable drag_value       equal 0.2
+
+# timestep in fs
+variable dt               equal 1.0
+variable temperature_damp equal ${dt}*100
+variable pressure_damp    equal ${dt}*1000
+
+variable output_npt_heating  equal floor(${time_npt_heating}/100)
+variable output_nvt_eq       equal floor(${time_nvt_eq}/100)
+variable output_nvt_prod     equal floor(${time_nvt_prod}/625)
+variable output_nvt_phonon   equal floor(${time_nvt_phonon}/5000)
+variable output_cooling      equal floor(${time_cooling}/100)
+
+
+timestep        ${dt}
+run_style       verlet
+velocity        all create ${init_temperature} ${random_seed} mom yes rot yes dist gaussian
+
+
+label loop
+if "${temperature} > ${final_temperature}" then "jump SELF break"
+
+#------------NPT heating
+reset_timestep 0
+log ./results/npt_heating_${temperature}K.log
+fix             npt_heating_id all npt temp ${init_temperature} ${temperature} ${temperature_damp} iso ${init_pressure} &
+                ${pressure} ${pressure_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_npt_heating} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,lx,ly,lz,vol" &
+                file ./results/npt_heating_${temperature}K.csv screen no
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_npt_heating}
+
+dump            trj_dump all atom/gz ${output_npt_heating} ./results/npt_heating_${temperature}K.lammpstrj.gz
+
+#----------------------------
+run             ${time_npt_heating}
+#----------------------------
+
+unfix           npt_heating_id
+unfix		    output_id
+undump		    trj_dump
+write_restart	./results/restart_npt_heating_${temperature}K.dat
+
+#------------NVT eq
+log ./results/nvt_eq_${temperature}K.log
+
+fix             nvt_eq_id all nvt temp ${temperature} ${temperature} ${temperature_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_nvt_eq} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,vol" &
+                file ./results/nvt_eq_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_eq}
+dump            trj_dump all atom/gz ${output_nvt_eq} ./results/nvt_eq_${temperature}K.lammpstrj.gz
+
+#----------------------------
+run             ${time_nvt_eq}
+#----------------------------
+unfix nvt_eq_id
+unfix output_id
+
+undump trj_dump
+write_restart	./results/restart_nvt_eq_${temperature}K.dat
+
+#------------NVT phonon
+log ./results/nvt_phonon_${temperature}K.log
+
+fix             nvt_phonon_id all nvt temp ${temperature} ${temperature} ${temperature_damp}
+
+# output
+fix 		    output_id all print ${output_nvt_phonon} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,vol" &
+                file ./results/nvt_phonon_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_phonon}
+dump            trj_dump all atom/gz ${output_nvt_phonon} ./results/nvt_phonon_${temperature}K.lammpstrj.gz
+
+reset_timestep  0
+#----------------------------
+run             ${time_nvt_phonon}
+#----------------------------
+
+unfix       nvt_phonon_id
+unfix 		output_id
+undump      trj_dump
+
+write_data      ./results/nvt_phonon_${temperature}K.data
+write_restart	./results/restart_nvt_phonon_${temperature}K.dat
+
+
+#------------NVT prod
+log ./results/nvt_prod_${temperature}K.log
+
+fix             nvt_prod_id all nvt temp ${temperature} ${temperature} ${temperature_damp}
+
+# output
+fix 		    output_id all print ${output_nvt_prod} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,vol" &
+                file ./results/nvt_prod_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_prod}
+dump            trj_dump all atom/gz ${output_nvt_prod} ./results/nvt_prod_${temperature}K.lammpstrj.gz
+
+reset_timestep  0
+
+#----------------------------
+run             ${time_nvt_prod}
+#----------------------------
+unfix           nvt_prod_id
+unfix 		output_id
+undump      trj_dump
+
+write_data      ./results/nvt_prod_${temperature}K.data
+write_restart	./results/restart_nvt_prod_${temperature}K.dat
+
+variable init_temperature  equal ${temperature}
+variable temperature       equal ${init_temperature}+${delta_temperature}
+
+jump SELF loop
+label break
+
+#------------NPT cooling
+log ./results/npt_cooling.log
+
+fix             cooling_id all npt temp ${temperature} ${init_temperature} ${temperature_damp} aniso ${pressure} ${init_pressure} ${pressure_damp}
+
+fix 		output_id all print ${output_cooling} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,lx,ly,lz,a,b,c,vol" file ./results/npt_cooling.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_cooling}
+dump            trj_dump all atom/gz ${output_cooling} ./results/npt_cooling.lammpstrj.gz
+
+
+#----------------------------
+run             ${time_cooling}
+#----------------------------
+unfix       cooling_id
+unfix		output_id
+undump		trj_dump
+#----------------------------
+write_data      ./results/npt_cooled.data

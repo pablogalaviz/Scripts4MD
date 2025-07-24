@@ -1,0 +1,14 @@
+[ defaults ]
+; nbfunc  comb-rule  gen-pairs  fudgeLJ  fudgeQQ
+  1       2          yes         1.0      1.0
+
+[ atomtypes ]
+; name          at.num  mass      charge  ptype sigma (nm)	epsilon(kJ mol^1)
+  FE2P          26      55.8450   0.0000  A     0.49062     3.77807e-06
+  FE3P          26      55.8450   0.0000  A     0.49062     3.77807e-06
+  O2M           8       15.9994   0.0000  A     0.31655     0.65019
+
+OWT4_tip4p2005f 8      15.99940   0.000   A     0.31644     0.77490
+HW_tip4p2005f   1       1.00800   0.000   A     0.00000e+00 0.00000e+00
+MW_tip4p2005f	0       0.00000   0.000   D     0.00000e+00 0.00000e+00
+

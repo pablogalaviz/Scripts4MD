@@ -1,0 +1,6 @@
+FE2P    55.8540 ; Magnetite Iron Fe2+
+FE3P    55.8540 ; Magnetite Iron Fe3+
+ O2M    15.9994 ; Magnetite Oxygen O2-
+  HW    1.00790 ; TIP4P/2005f Hydrogen
+  OW    15.9994 ; TIP4P/2005f Oxygen
+  MW    0.00000 ; TIP4P/2005f Virtual site

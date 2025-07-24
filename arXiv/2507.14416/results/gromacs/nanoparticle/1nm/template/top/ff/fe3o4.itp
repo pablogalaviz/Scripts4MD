@@ -1,0 +1,25 @@
+[ moleculetype ]
+; molname nrexcl
+  FEA      1
+
+[ atoms ]
+; id  at-type  res-nr  res-name  at-name  cg-nr  charge  mass
+  1   FE2P       1       FE2P        FE2P      1      1.05000   55.8450
+
+[ moleculetype ]
+; molname nrexcl
+  FEB      1
+
+[ atoms ]
+; id  at-type  res-nr  res-name  at-name  cg-nr  charge  mass
+  1   FE3P     69       FE3P        FE3P      1      1.5750   55.8450
+
+
+[ moleculetype ]
+; molname nrexcl
+  O2M      1
+
+[ atoms ]
+; id  at-type  res-nr  res-name  at-name  cg-nr  charge  mass
+  1   O2M     181       O2M        O2M      1      -1.0500   15.9994
+

@@ -1,0 +1,10 @@
+#include "ff/forcefield.itp"
+#include "ff/fe3o4.itp"
+#include "ff/tip4p2005f.itp"
+
+[ System ]
+H2O box
+
+[ Molecules ]
+SOL 100
+

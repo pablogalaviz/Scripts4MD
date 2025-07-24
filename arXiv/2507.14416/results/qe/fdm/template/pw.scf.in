@@ -1,0 +1,58 @@
+&CONTROL
+  calculation = 'scf'
+  etot_conv_thr =   1.4000000000d-04
+  forc_conv_thr =   1.0000000000d-04
+  outdir = './out/'
+  prefix = 'Fe3O4'
+  pseudo_dir = './pseudo/'
+  disk_io = 'nowf'
+  tprnfor = .true.
+  tstress = .false.
+  verbosity = 'high'
+  nstep = 1000
+/
+&SYSTEM
+  degauss =   2.0000000000d-02
+  ecutrho =   1.0800000000d+03
+  ecutwfc =   9.0000000000d+01
+  ibrav = 0
+  nat = 14
+  nosym = .false.
+  nspin = 2
+  ntyp = 3
+  occupations = 'smearing'
+  smearing = 'cold'
+  starting_magnetization(1) =   -3.0548
+  starting_magnetization(2) =   3.3373
+  starting_magnetization(3) =   0.0844
+/
+&ELECTRONS
+  conv_thr =   2.8000000000d-09
+  electron_maxstep = 80
+  mixing_beta =   4.0000000000d-01
+/
+ATOMIC_SPECIES
+Fe1     55.845 Fe.pbesol-spn-kjpaw_psl.0.2.1.UPF
+Fe2     55.845 Fe.pbesol-spn-kjpaw_psl.0.2.1.UPF
+O      15.9994 O.pbesol-n-kjpaw_psl.0.1.UPF
+ATOMIC_POSITIONS crystal
+Fe1           0.7500000000        0.7500000000        0.7500000000
+Fe1           0.5000000000        0.5000000000        0.5000000000
+Fe2           0.1250000000        0.1250000000        0.1250000000
+Fe2           0.1250000000        0.1250000000        0.6250000000
+Fe2           0.1250000000        0.6250000000        0.1250000000
+Fe2           0.6250000000        0.1250000000        0.1250000000
+O             0.8794369534        0.8794369534        0.8794369534
+O             0.3705630466        0.3705630466        0.3705630466
+O             0.8794369534        0.8794369534        0.3616891399
+O             0.3705630466        0.3705630466        0.8883108601
+O             0.8794369534        0.3616891399        0.8794369534
+O             0.3705630466        0.8883108601        0.3705630466
+O             0.3616891399        0.8794369534        0.8794369534
+O             0.8883108601        0.3705630466        0.3705630466
+K_POINTS automatic
+9 9 9 0 0 0
+CELL_PARAMETERS angstrom
+   0.000000000   4.138151296   4.138151296
+   4.138151296   0.000000000   4.138151296
+   4.138151296   4.138151296   0.000000000

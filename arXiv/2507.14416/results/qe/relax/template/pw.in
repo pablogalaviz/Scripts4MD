@@ -1,0 +1,63 @@
+&CONTROL
+  calculation = 'vc-relax'
+  etot_conv_thr =   1.4000000000d-04
+  forc_conv_thr =   1.0000000000d-04
+  outdir = './out/'
+  prefix = 'Fe3O4'
+  pseudo_dir = './pseudo/'
+  disk_io = 'nowf'
+  tprnfor = .true.
+  tstress = .true.
+  verbosity = 'high'
+
+  nstep = 1000
+/
+&SYSTEM
+  degauss =   2.0000000000d-02
+  ecutrho =   1.0800000000d+03
+  ecutwfc =   9.0000000000d+01
+  ibrav = 0
+  nat = 14
+  nosym = .false.
+  nspin = 2
+  ntyp = 3
+  occupations = 'smearing'
+  smearing = 'cold'
+  starting_magnetization(1) =   -3.63
+  starting_magnetization(2) =   3.63
+  starting_magnetization(3) =   0
+/
+&ELECTRONS
+  conv_thr =   2.8000000000d-09
+  electron_maxstep = 80
+  mixing_beta =   4.0000000000d-01
+/
+&IONS
+/
+&CELL
+/
+ATOMIC_SPECIES
+Fe1     55.845 Fe.pbesol-spn-kjpaw_psl.0.2.1.UPF
+Fe2     55.845 Fe.pbesol-spn-kjpaw_psl.0.2.1.UPF
+O      15.9994 O.pbesol-n-kjpaw_psl.0.1.UPF
+ATOMIC_POSITIONS crystal
+Fe1          0.7500000000       0.7500000000       0.7500000000
+Fe1          0.5000000000       0.5000000000       0.5000000000
+Fe2          0.1250000000       0.1250000000       0.1250000000
+Fe2          0.1250000000       0.1250000000       0.6250000000
+Fe2          0.1250000000       0.6250000000       0.1250000000
+Fe2          0.6250000000       0.1250000000       0.1250000000
+O            0.8846400113       0.8846400113       0.8846400113
+O            0.3653599887       0.3653599887       0.3653599887
+O            0.8846400113       0.8846400113       0.3460799661
+O            0.3653599887       0.3653599887       0.9039200339
+O            0.8846400113       0.3460799661       0.8846400113
+O            0.3653599887       0.9039200339       0.3653599887
+O            0.3460799661       0.8846400113       0.8846400113
+O            0.9039200339       0.3653599887       0.3653599887
+K_POINTS automatic
+9 9 9 0 0 0
+CELL_PARAMETERS angstrom
+      0.0000000000       4.1985001241       4.1985001241
+      4.1985001241       0.0000000000       4.1985001241
+      4.1985001241       4.1985001241       0.0000000000

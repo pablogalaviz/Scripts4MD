@@ -1,0 +1,18 @@
+[ defaults ]
+; nbfunc  comb-rule  gen-pairs  fudgeLJ  fudgeQQ
+  1       1          no         1.0      1.0
+
+[ atomtypes ]
+; name  at.num  mass      charge  ptype  C^6(kJ mol^1 nm^6)	C^12(kJ mol^1 nm^12)
+  FE2P  26      55.8540   0.0000  A      0.00000        0.00000
+  FE3P  26      55.8540   0.0000  A      0.00000        0.00000
+  O2M    8      15.9994   0.0000  A      0.00000        0.00000
+  HW     1       1.0079   0.0000  A      0.00000        0.00000
+  OW     8      15.9994   0.0000  A      3.11210e-03    3.12466e-06
+  MW     0       0.0000   0.0000  D      0.00000        0.00000
+
+[nonbond_params]
+; i     j	func	C^6(kJ mol^1 nm^6)  C^12(kJ mol^1 nm^12)
+FE2P    O2M    1    -5.68418580e-03     4.77923196e-08
+FE3P    O2M    1    -8.90409329e-03    -8.02344904e-09
+O2M     O2M    1     3.58400021e-03     7.85536645e-07

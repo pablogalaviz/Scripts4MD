@@ -1,0 +1,55 @@
+;##################################
+;#           Initialize           #
+;##################################
+integrator           = md
+tinit                = 0
+dt                   = 0.001  ; 0.001 ps = 1fs
+comm-grps            = non-Water Water
+nsteps               = 10000 ; 10000*0.001 ps = 10 ps
+nstxout              = 1000
+nstvout              = 1000
+nstfout              = 1000
+nstlog               = 10000
+nstenergy            = 1000
+nstlist              = 5
+ns-type              = grid
+pbc                  = xyz
+
+;##################################
+;#           Non-Bonded           #
+;##################################
+cutoff-scheme        = verlet
+rlist                = 1.4
+coulombtype          = PME
+rcoulomb             = 1.4
+pme-order            = 4
+vdwtype              = cut-off
+rvdw                 = 1.4
+DispCorr             = EnerPres
+
+;##################################
+;#           T-Coupling           #
+;##################################
+tcoupl               = v-rescale
+tc-grps              = non-Water Water
+tau-t                = 1.0 1.0
+ref-t                = 298.15 298.15
+
+;##################################
+;#           P-Coupling           #
+;##################################
+pcoupl               = no
+
+;##################################
+;#           Velocities           #
+;##################################
+gen-vel              = no
+continuation         = yes
+
+;##################################
+;#           Constraints          #
+;##################################
+constraints          = h-bonds
+constraint-algorithm = lincs
+lincs-order          = 4
+lincs-iter           = 2

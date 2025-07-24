@@ -1,0 +1,12 @@
+#include "ff/forcefield.itp"
+#include "ff/fe3o4.itp"
+;#include "ff/tip4p2005f.itp"
+
+[ System ]
+Fe3O4 Nano particle
+
+[ Molecules ]
+FEA   3792
+FEB   7296
+O2M  14736
+

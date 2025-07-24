@@ -1,0 +1,46 @@
+newton on
+units        real
+boundary p p p
+atom_style full
+pair_style reaxff NULL safezone 3.0 mincap 150
+neighbor 1.0 bin
+neigh_modify delay 1
+variable random_seed equal 45585
+
+#
+#	PORE SETUP
+#
+
+region domain block -40 40 -40 40 -40 40
+create_box 3 domain
+
+create_atoms A single 0 0 0
+create_atoms B single 1 0 0
+
+mass 1  55.845000
+mass 2  55.845000
+mass 3  15.999400
+
+set type 1 charge  1.050
+set type 2 charge  1.575
+set type 3 charge -1.050
+
+pair_coeff * * ./potentials/ReaxFF2022.reaxff Fe Fe O
+fix myqeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff maxiter 400
+
+variable x_position  equal 0.8
+variable delta_x_position  equal 0.1
+variable final_x_position  equal 4
+
+dump trj_dump all custom 1 ./results/force.csv id type x y z fx fy fz
+dump_modify trj_dump format line "%d, %d, %15.8f, %15.8f, %15.8f, %15.8f, %15.8f, %15.8f" header no
+
+
+label loop
+if "${x_position} > ${final_x_position}" then "jump SELF break"
+
+set atom 2 x ${x_position}
+run 1
+variable x_position equal ${x_position}+${delta_x_position}
+jump SELF loop
+label break
