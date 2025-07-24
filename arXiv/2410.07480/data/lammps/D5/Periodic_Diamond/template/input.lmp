@@ -1,0 +1,188 @@
+# PREREQUISITES:
+#
+
+# ----------------------------- Initialization Section --------------------
+
+
+#
+#	VARIABLES 
+#
+
+variable init_temperature equal 100.0
+variable temperature      equal 300.0
+variable init_pressure    equal 10
+variable pressure         equal 1.0
+variable time_npt         equal 50
+variable time_nvt_eq      equal 50
+variable time_nvt_prod    equal 10
+variable time_cooling     equal 5
+
+variable drag_value       equal 10.0
+
+variable dt               equal 0.001
+variable temperature_damp equal ${dt}*300
+variable pressure_damp    equal ${dt}*30000
+
+variable iterations_npt      equal floor(${time_npt}/${dt})
+variable iterations_nvt_eq   equal floor(${time_nvt_eq}/${dt})
+variable iterations_nvt_prod equal floor(${time_nvt_prod}/${dt})
+variable iterations_cooling  equal floor(${time_cooling}/${dt})
+
+variable output_npt       equal floor(${iterations_npt}/100)
+variable output_nvt_eq    equal floor(${iterations_nvt_eq}/100)
+variable output_nvt_prod  equal floor(${iterations_nvt_prod}/3333)
+variable output_cooling   equal floor(${iterations_cooling}/100)
+
+variable etol       equal 0.0
+variable ftol       equal 1e-8
+variable maxiter    equal 10000
+variable maxeval     equal 100000
+variable nreset	    equal 100
+
+variable random_seed  equal 436451
+
+variable BoxSize equal 12
+
+
+    units        metal
+    atom_style   full
+    pair_style  airebo 3 0 0 
+    boundary p p p 
+  
+
+# ----------------------------- Atom Definition Section -------------------
+
+
+lattice diamond 3.56
+
+region whole block 0 1 0 1 0 1 units lattice
+create_box 1 whole
+mass 1 12.0107
+create_atoms 1 region whole
+replicate ${BoxSize} ${BoxSize} ${BoxSize}
+
+
+#neigh_modify one 10 
+#delete_atoms overlap 0.1 all all
+
+# ----------------------------- Settings Section --------------------------
+
+    #              i       j                             epsilon     sigma
+pair_coeff  * *  ./forcefields/CH.airebo C
+
+
+
+# ----------------------------- Run Section -------------------------------
+
+# -- simulation protocol --
+
+
+delete_atoms overlap 0.1 all all
+
+
+#
+#	ENERGY MINIMIZATION
+#
+
+# atoms only
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+reset_timestep 0
+write_data ./results/structure_relaxed_atoms.data
+
+# isotropic volume relaxation
+fix fiso all box/relax iso ${init_pressure}
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+unfix fiso
+reset_timestep 0
+write_data ./results/structure_relaxed_iso.data
+
+
+timestep        ${dt}
+run_style       verlet
+velocity        all create ${init_temperature} ${random_seed} mom yes rot no dist gaussian
+
+log ./results/npt.log
+
+#------------NPT
+fix             npt_id all npt temp ${init_temperature} ${temperature} ${temperature_damp} iso ${init_pressure} ${init_pressure} ${pressure_damp} drag ${drag_value}
+
+# output
+fix 		output_id all print ${output_npt} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,a,b,c,vol" file npt.csv screen no
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_npt}
+
+dump            trj_dump all atom ${output_npt} ./results/npt.lammpstrj
+
+#----------------------------
+run             ${iterations_npt}
+#----------------------------
+
+unfix           npt_id
+unfix		output_id
+undump		trj_dump
+write_restart	./results/restart_npt.dat
+
+#------------NPT2
+fix             npt2_id all npt temp ${temperature} ${temperature} ${temperature_damp} iso ${init_pressure} ${pressure} ${pressure_damp} drag ${drag_value}
+
+# output
+fix 		output_id all print ${output_npt} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,a,b,c,vol" file npt2.csv screen no
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_npt}
+
+dump            trj_dump all atom ${output_npt} ./results/npt.lammpstrj
+
+#----------------------------
+run             ${iterations_npt}
+#----------------------------
+
+unfix           npt2_id
+unfix		output_id
+undump		trj_dump
+write_restart	./results/restart_npt2.dat
+
+
+#------------NVT eq
+log ./results/nvt_eq.log
+
+fix             nvt_eq_id all nvt temp ${temperature} ${temperature} ${temperature_damp} drag ${drag_value}
+
+# output
+fix 		output_id all print ${output_nvt_eq} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,a,b,c,vol" file nvt_eq.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_nvt_eq}
+dump            trj_dump all atom ${output_nvt_eq} ./results/nvt_eq.lammpstrj
+
+#----------------------------
+run             ${iterations_nvt_eq}
+#----------------------------
+unfix nvt_eq_id
+unfix output_id
+undump trj_dump
+write_restart	./results/restart_nvt_eq.dat
+
+#------------NVT prod
+log ./results/nvt_prod.log
+
+fix             nvt_prod_id all nvt temp ${temperature} ${temperature} ${temperature_damp}
+
+# output
+fix 		output_id all print ${output_nvt_prod} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,a,b,c,vol" file nvt_prod.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_nvt_prod}
+dump            trj_dump all atom ${output_nvt_prod} ./results/nvt_prod.lammpstrj
+
+reset_timestep  0
+
+#----------------------------
+run             ${iterations_nvt_prod}
+#----------------------------
+unfix           nvt_prod_id
+unfix 		output_id
+undump          trj_dump
+
+write_data      ./results/nvt_prod.config
+write_restart	./results/restart_nvt_prod.dat
+
