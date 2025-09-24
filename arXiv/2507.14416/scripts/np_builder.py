@@ -95,7 +95,7 @@ if __name__ == "__main__":
     index_inside = []
     index_outside = []
     for i, site in enumerate(structure.sites):
-        if site.distance_from_point([cy, cy, cz]) <= args.radius*10:
+        if site.distance_from_point([cx, cy, cz]) <= args.radius*10:
             subcell = site.properties['subcell']
             cell_state[subcell] += 1
             index_inside.append(i)

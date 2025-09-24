@@ -24,15 +24,15 @@ def convert(runset,temperature):
     lammps = REGISTRY['job']['lammps']()
     lammps.run(parameters, status=True)
 
-def dos(temperature,weights):
+def dos(temperature,weights,groupping):
     parameters = {}
     parameters['atom_selection'] = None
     parameters['atom_transmutation'] = None
     parameters['frames'] = (0, 5000, 1)
-    parameters['grouping_level'] = u'atom'
+    parameters['grouping_level'] = groupping
     parameters['instrument_resolution'] = ('gaussian', {'mu': 0.0, 'sigma': 1.0})
     parameters['interpolation_order'] = u'2nd order'
-    parameters['output_files'] = (u'%s_%dK_dos'%(weights,temperature), (u'hdf',))
+    parameters['output_files'] = (u'%s_%s_%dK_dos'%(groupping,weights,temperature), (u'hdf',))
     parameters['projection'] = None
     parameters['running_mode'] = ('monoprocessor',)
     parameters['trajectory'] = u'nvt_phonon_%dK.nc'%temperature
@@ -140,10 +140,10 @@ def ecc(temperature):
 # Job parameters                                               #
 ################################################################
 for temperature in [200, 300]:
-    convert("nvt_phonon",temperature)
-    dos(temperature,"atomic_weight")
-    dos(temperature,"b_incoherent")
-
+#    convert("nvt_phonon",temperature)
+    for groupping in [u'atom', u'group']:
+        dos(temperature, "b_incoherent", groupping)
+    continue
     convert("nvt_prod",temperature)
     msd(temperature)
     rmsd(temperature)
