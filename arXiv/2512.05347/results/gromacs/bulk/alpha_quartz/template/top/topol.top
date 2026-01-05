@@ -1,0 +1,12 @@
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.833333
+
+#include "grid.itp"
+
+[ system ]
+Alpha quartz block
+
+[ molecules ]
+OM 7776
+SI 3888

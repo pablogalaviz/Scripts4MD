@@ -1,0 +1,31 @@
+;##################################
+;#           Initialize           #
+;##################################
+integrator           = steep
+nsteps               = 10000
+emtol                = 2200
+emstep               = 0.02
+;energygrps           = OM SI
+;energygrp-excl       = OM OM OM SI SI SI
+nstlog               = 1
+nstenergy            = 1
+
+;##################################
+;#           Non-Bonded           #
+;##################################
+nstlist              = 10
+rlist                = 1.4
+cutoff-scheme        = verlet
+coulombtype          = PME
+rcoulomb             = 1.4
+rvdw                 = 1.4
+vdwtype              = cut-off
+pbc                  = xyz
+
+;##################################
+;#          Constraints           #
+;##################################
+constraints          = h-bonds
+constraint-algorithm = lincs
+lincs-order          = 4
+lincs-iter           = 2

@@ -1,0 +1,50 @@
+# This file was created Wed Sep  3 17:22:26 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_360/md_prod_300
+# Command line:
+#   gmx energy -f out.edr -o pressure.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Guyana Rwanda Oman Macau Angola Cameroon Senegal
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(bar)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Pressure"
+    0.000000  236.575790
+    2.000000  -357.724758
+    4.000000  665.951093
+    6.000000  -225.833409
+    8.000000   49.724062
+   10.000000  339.289563
+   12.000000  119.516496
+   14.000000  232.809442
+   16.000000  -26.697669
+   18.000000   72.271173
+   20.000000   72.529584
+   22.000000  498.113689
+   24.000000  391.158994
+   26.000000  438.870445
+   28.000000   30.675583
+   30.000000  259.774818
+   32.000000  362.604372
+   34.000000  327.871173
+   36.000000  437.567336
+   38.000000  136.151433
+   40.000000  200.314204
+   42.000000  153.962045
+   44.000000  -108.246128
+   46.000000  178.995959
+   48.000000  138.758925
+   50.000000  437.475944

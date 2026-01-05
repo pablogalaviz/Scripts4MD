@@ -1,0 +1,50 @@
+# This file was created Thu Sep  4 15:28:01 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_720/md_prod_300
+# Command line:
+#   gmx energy -f out.edr -o temperature.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Gyas ROwers Mature At Cryogenic Speed
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(K)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Temperature"
+    0.000000  299.363507
+    2.000000  295.005235
+    4.000000  299.721825
+    6.000000  300.668609
+    8.000000  298.724152
+   10.000000  300.037627
+   12.000000  297.315214
+   14.000000  295.943292
+   16.000000  304.227620
+   18.000000  307.530107
+   20.000000  298.851594
+   22.000000  302.194010
+   24.000000  299.726374
+   26.000000  299.606491
+   28.000000  305.327555
+   30.000000  300.131608
+   32.000000  302.356817
+   34.000000  297.321136
+   36.000000  299.858777
+   38.000000  295.553464
+   40.000000  300.293254
+   42.000000  297.488062
+   44.000000  299.542312
+   46.000000  302.955080
+   48.000000  301.598594
+   50.000000  300.014594

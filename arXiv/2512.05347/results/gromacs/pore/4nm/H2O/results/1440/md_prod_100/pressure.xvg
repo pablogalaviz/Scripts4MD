@@ -1,0 +1,50 @@
+# This file was created Wed Sep  3 13:27:07 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_1440/md_prod_100
+# Command line:
+#   gmx energy -f out.edr -o pressure.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Great Red Owns Many ACres of Sand 
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(bar)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Pressure"
+    0.000000  -68.540704
+    2.000000  -351.779564
+    4.000000  164.465822
+    6.000000   32.828872
+    8.000000  -318.739640
+   10.000000  -176.886860
+   12.000000  -189.603574
+   14.000000  -11.807884
+   16.000000  -219.486433
+   18.000000  -43.613330
+   20.000000  -168.124969
+   22.000000  -193.878807
+   24.000000  -146.723436
+   26.000000  -226.883212
+   28.000000  -389.834918
+   30.000000   20.784164
+   32.000000  -282.550022
+   34.000000  -37.984731
+   36.000000  -233.105103
+   38.000000  -164.361753
+   40.000000  -103.030107
+   42.000000  -169.122139
+   44.000000  -171.981835
+   46.000000  -255.799706
+   48.000000  -12.088107
+   50.000000  -173.195640

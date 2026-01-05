@@ -1,0 +1,53 @@
+&CONTROL
+  calculation = 'vc-relax'
+  etot_conv_thr =   9.0000000000d-06
+  forc_conv_thr =   1.0000000000d-05
+  outdir = './out/'
+  prefix = 'SiO2'
+  pseudo_dir = './pseudo/'
+  disk_io = 'nowf'
+  tprnfor = .true.
+  tstress = .true.
+  verbosity = 'high'
+  nstep = 1000
+/
+&SYSTEM
+  degauss =   2.0000000000d-02
+  ecutrho =   6.0000000000d+02
+  ecutwfc =   7.5000000000d+01
+  ibrav = 0
+  nat = 9
+  nosym = .false.
+  ntyp = 2
+  occupations = 'smearing'
+  smearing = 'cold'
+/
+&ELECTRONS
+  conv_thr =   9.0000000000d-10
+  electron_maxstep = 80
+  mixing_beta =   4.0000000000d-01
+/
+&IONS
+/
+&CELL
+/
+ATOMIC_SPECIES
+O      15.9994 O.pbesol-n-kjpaw_psl.0.1.UPF
+Si     28.0855 Si.pbesol-n-rrkjus_psl.1.0.0.UPF
+K_POINTS automatic
+10 10 8 0 0 0
+CELL_PARAMETERS (angstrom)
+   4.940492024   0.000000000   0.000000000
+  -2.470246011   4.278591599  -0.000000000
+   0.000000000  -0.000000000   5.436849887
+
+ATOMIC_POSITIONS (crystal)
+O             0.4120516553        0.2690922041        0.2161322053
+O             0.7309077959        0.1429594512        0.5494655386
+O             0.8570405488        0.5879483447        0.8827988720
+O             0.2690922301        0.4120515407        0.7838455269
+O             0.5879484593        0.8570406895        0.1171788602
+O             0.1429593105        0.7309077699        0.4505121936
+Si            0.4690710155       -0.0000000335        0.3333222678
+Si            0.0000000335        0.4690710491        0.6666556011
+Si            0.5309289509        0.5309289845        0.9999889345

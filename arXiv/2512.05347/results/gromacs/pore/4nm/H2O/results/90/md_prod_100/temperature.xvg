@@ -1,0 +1,50 @@
+# This file was created Thu Sep  4 02:45:23 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_90/md_prod_100
+# Command line:
+#   gmx energy -f out.edr -o temperature.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Glycine aRginine prOline Methionine Alanine Cystine Serine
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(K)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Temperature"
+    0.000000  100.981833
+    2.000000   99.400357
+    4.000000   99.916123
+    6.000000  100.157338
+    8.000000   99.953534
+   10.000000   99.509029
+   12.000000  100.082712
+   14.000000   99.778439
+   16.000000   99.176371
+   18.000000  100.043624
+   20.000000  100.578765
+   22.000000  101.095370
+   24.000000   99.522751
+   26.000000   98.444723
+   28.000000   99.939773
+   30.000000   99.127364
+   32.000000   99.247265
+   34.000000   99.695307
+   36.000000   99.027312
+   38.000000   99.386080
+   40.000000   99.958281
+   42.000000  100.219060
+   44.000000   98.938767
+   46.000000   99.700543
+   48.000000  101.207515
+   50.000000   99.691268

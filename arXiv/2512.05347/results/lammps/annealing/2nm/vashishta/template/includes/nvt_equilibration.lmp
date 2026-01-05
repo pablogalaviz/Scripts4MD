@@ -1,0 +1,21 @@
+#------------NVT equilibration
+log ./results/nvt_equilibration_${temperature}K.log
+
+fix             evolution_id all nvt temp ${temperature} ${temperature} ${temperature_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_it} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,lx,ly,lz,vol" &
+                file ./results/nvt_equilibration_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_it}
+dump            trj_dump all atom/gz ${output_it} ./results/nvt_equilibration_${temperature}K.lammpstrj.gz
+
+#----------------------------
+run             ${iterations}
+#----------------------------
+unfix evolution_id
+unfix output_id
+undump trj_dump
+write_restart	./results/nvt_equilibration_${temperature}K.restart

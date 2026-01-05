@@ -1,0 +1,274 @@
+newton on
+units        real
+boundary p p p
+atom_style charge
+pair_style reaxff NULL safezone 3.0 mincap 150
+neighbor 1.0 bin
+neigh_modify delay 1
+
+#
+#	PORE SETUP
+#
+
+read_data   ./data/SiO2_pore.data &
+            extra/atom/types 2
+
+mass 8 15.9994
+mass 9 1.00794
+
+
+set type 1 charge 0.7659
+set type 2 charge 0.7659
+set type 3 charge -1.0500
+set type 4 charge -1.0500
+set type 5 charge -1.0500
+set type 6 charge 2.1000
+set type 7 charge 2.1000
+
+set type 8 charge -1.1128
+set type 9 charge 0.5564
+
+variable center_x equal lx/2
+variable center_y equal ly/2
+variable center_z equal lz/2
+
+variable pore_radius equal 15
+variable number_of_H2O equal 90
+
+variable random_seed equal 45585
+
+region pore_cylinder cylinder z ${center_x} ${center_y} ${pore_radius} 0 EDGE units box
+
+lattice sc 2.0
+molecule h2omol ./data/H2O_molecule.txt
+create_atoms 0 region pore_cylinder mol h2omol ${random_seed} subset ${number_of_H2O} ${random_seed}
+lattice none 1
+
+group SiO2 type 3 4 5 6 7
+group H2O type 8 9
+group Q2 type 1 2
+
+pair_coeff * * ./potentials/reaxSiOH2023.ff H H O O O Si Si O H
+fix myqeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff maxiter 400
+
+delete_atoms overlap 0.3 all all
+reset_atoms id sort yes
+
+# Output
+write_data ./results/initial_structure.data
+
+
+#
+#	ENERGY MINIMIZATION
+#
+
+variable etol        equal 1e-6
+variable ftol        equal 1e-4
+variable maxiter     equal 10000
+variable thermo_iter equal floor(${maxiter}/100)
+variable maxeval     equal 100000
+
+
+# monitoring "fnorm" during minimization
+thermo ${thermo_iter}
+thermo_style custom step temp pe etotal press fnorm
+thermo_modify norm no
+
+# atoms only
+min_style fire
+min_modify line quadratic
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+write_data ./results/structure_relaxed_atoms.data
+
+variable init_temperature  equal   10.0
+variable temperature       equal  300.0
+variable delta_temperature equal -100.0
+variable final_temperature equal  100.0
+
+variable init_pressure    equal 100
+variable pressure         equal 1.0
+variable time_npt         equal  30000
+variable time_nvt_eq      equal  10000
+variable time_nvt_prod    equal  15000
+variable time_cooling     equal  10000
+
+variable drag_value       equal 0.2
+
+variable dt               equal 0.1
+variable temperature_damp equal ${dt}*100
+variable pressure_damp    equal ${dt}*1000
+
+
+variable iterations_npt      equal floor(${time_npt}/${dt})
+variable iterations_nvt_eq   equal floor(${time_nvt_eq}/${dt})
+variable iterations_nvt_prod equal floor(${time_nvt_prod}/${dt})
+variable iterations_cooling  equal floor(${time_cooling}/${dt})
+
+variable output_npt       equal floor(${iterations_npt}/100)
+variable output_nvt_eq    equal floor(${iterations_nvt_eq}/100)
+variable output_nvt_prod  equal 3
+variable output_cooling   equal floor(${iterations_cooling}/100)
+
+
+timestep        ${dt}
+run_style       verlet
+velocity        all create ${init_temperature} ${random_seed} mom yes rot no dist gaussian
+
+#------------NVT eq
+log ./results/nvt_eq_${init_temperature}K.log
+
+fix             nvt_eq_id all nvt temp ${init_temperature} ${init_temperature} ${temperature_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_nvt_eq} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,vol" &
+                file ./results/nvt_eq_${init_temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_eq}
+dump            trj_dump all atom/gz ${output_nvt_eq} ./results/nvt_eq_${init_temperature}K.lammpstrj.gz
+dump            H2O_dump H2O atom/gz ${output_nvt_eq} ./results/nvt_eq_${init_temperature}K_H2O.lammpstrj.gz
+dump            SiO2_dump SiO2 atom/gz ${output_nvt_eq} ./results/nvt_eq_${init_temperature}K_SiO2.lammpstrj.gz
+dump            Q2_dump Q2 atom/gz ${output_nvt_eq} ./results/nvt_eq_${init_temperature}K_Q2.lammpstrj.gz
+
+#----------------------------
+run             ${iterations_nvt_eq}
+#----------------------------
+unfix nvt_eq_id
+unfix output_id
+undump trj_dump
+undump H2O_dump
+undump SiO2_dump
+undump Q2_dump
+write_restart	./results/restart_nvt_eq_${init_temperature}K.dat
+
+
+
+label loop
+if "${temperature} < ${final_temperature}" then "jump SELF break"
+
+#------------NPT
+reset_timestep 0
+log ./results/npt_${temperature}K.log
+fix             npt_id all npt temp ${init_temperature} ${temperature} ${temperature_damp} iso ${init_pressure} &
+                ${init_pressure} ${pressure_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_npt} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,vol" &
+                file ./results/npt_${temperature}K.csv screen no
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_npt}
+
+dump            trj_dump all atom/gz ${output_npt} ./results/npt_${temperature}K.lammpstrj.gz
+dump            H2O_dump H2O atom/gz ${output_npt} ./results/npt_${temperature}K_H2O.lammpstrj.gz
+dump            SiO2_dump SiO2 atom/gz ${output_npt} ./results/npt_${temperature}K_SiO2.lammpstrj.gz
+dump            Q2_dump Q2 atom/gz ${output_npt} ./results/npt_${temperature}K_Q2.lammpstrj.gz
+
+#----------------------------
+run             ${iterations_npt}
+#----------------------------
+
+unfix           npt_id
+unfix		    output_id
+undump		    trj_dump
+undump          H2O_dump
+undump          SiO2_dump
+undump          Q2_dump
+write_restart	./results/restart_npt_${temperature}K.dat
+
+#------------NVT eq
+log ./results/nvt_eq_${temperature}K.log
+
+fix             nvt_eq_id all nvt temp ${temperature} ${temperature} ${temperature_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_nvt_eq} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,vol" &
+                file ./results/nvt_eq_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_eq}
+dump            trj_dump all atom/gz ${output_nvt_eq} ./results/nvt_eq_${temperature}K.lammpstrj.gz
+dump            H2O_dump H2O atom/gz ${output_nvt_eq} ./results/nvt_eq_${temperature}K_H2O.lammpstrj.gz
+dump            SiO2_dump SiO2 atom/gz ${output_nvt_eq} ./results/nvt_eq_${temperature}K_SiO2.lammpstrj.gz
+dump            Q2_dump Q2 atom/gz ${output_nvt_eq} ./results/nvt_eq_${temperature}K_Q2.lammpstrj.gz
+
+#----------------------------
+run             ${iterations_nvt_eq}
+#----------------------------
+unfix nvt_eq_id
+unfix output_id
+undump trj_dump
+undump H2O_dump
+undump SiO2_dump
+undump Q2_dump
+write_restart	./results/restart_nvt_eq_${temperature}K.dat
+
+#------------NVT prod
+log ./results/nvt_prod_${temperature}K.log
+
+fix             nvt_prod_id all nvt temp ${temperature} ${temperature} ${temperature_damp}
+
+# output
+fix 		    output_id all print ${output_nvt_prod} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,vol" &
+                file ./results/nvt_prod_${temperature}K.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair vol
+thermo          ${output_nvt_prod}
+dump            trj_dump all atom/gz ${output_nvt_prod} ./results/nvt_prod_${temperature}K.lammpstrj.gz
+dump            H2O_dump H2O atom/gz ${output_nvt_prod} ./results/nvt_prod_${temperature}K_H2O.lammpstrj.gz
+dump            SiO2_dump SiO2 atom/gz ${output_nvt_prod} ./results/nvt_prod_${temperature}K_SiO2.lammpstrj.gz
+dump            Q2_dump Q2 atom/gz ${output_nvt_prod} ./results/nvt_prod_${temperature}K_Q2.lammpstrj.gz
+
+reset_timestep  0
+
+#----------------------------
+run             ${iterations_nvt_prod}
+#----------------------------
+unfix           nvt_prod_id
+unfix 		output_id
+undump      trj_dump
+undump      H2O_dump
+undump      SiO2_dump
+undump      Q2_dump
+
+write_data      ./results/nvt_prod_${temperature}K.data
+write_restart	./results/restart_nvt_prod_${temperature}K.dat
+
+variable init_temperature  equal ${temperature}
+variable temperature       equal ${init_temperature}+${delta_temperature}
+variable time_npt          equal 10000
+variable iterations_npt    equal floor(${time_npt}/${dt})
+variable output_npt        equal floor(${iterations_npt}/100)
+
+jump SELF loop
+label break
+
+#------------NPT cooling
+log ./results/npt_cooling.log
+
+fix             cooling_id all npt temp ${temperature} ${init_temperature} ${temperature_damp} aniso ${pressure} ${pressure} ${pressure_damp}
+
+fix 		output_id all print ${output_cooling} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(cella),$(cellb),$(cellc),$(vol)" title "time step,temperature,pressure,potential energy,kinetic energy,pair energy,lx,ly,lz,a,b,c,vol" file ./results/npt_cooling.csv screen no
+
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_cooling}
+dump            trj_dump all atom/gz ${output_cooling} ./results/npt_cooling.lammpstrj.gz
+dump            H2O_dump H2O atom/gz ${output_cooling} ./results/npt_cooling_H2O.lammpstrj.gz
+dump            SiO2_dump SiO2 atom/gz ${output_cooling} ./results/npt_cooling_SiO2.lammpstrj.gz
+dump            Q2_dump Q2 atom/gz ${output_cooling} ./results/npt_cooling_Q2.lammpstrj.gz
+
+
+#----------------------------
+run             ${iterations_cooling}
+#----------------------------
+unfix       cooling_id
+unfix		output_id
+undump		trj_dump
+undump      H2O_dump
+undump      SiO2_dump
+undump      Q2_dump
+#----------------------------
+write_data      ./results/npt_cooled.data

@@ -1,0 +1,50 @@
+# This file was created Wed Sep  3 21:58:17 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_90/md_prod_200
+# Command line:
+#   gmx energy -f out.edr -o temperature.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Good ROcking Metal Altar for Chronical Sinners
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(K)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Temperature"
+    0.000000  201.386783
+    2.000000  203.742301
+    4.000000  200.633218
+    6.000000  200.351100
+    8.000000  200.326835
+   10.000000  202.017535
+   12.000000  199.643391
+   14.000000  197.467183
+   16.000000  201.499813
+   18.000000  198.521850
+   20.000000  197.625388
+   22.000000  202.161457
+   24.000000  202.630112
+   26.000000  202.809777
+   28.000000  201.161664
+   30.000000  200.440099
+   32.000000  201.360622
+   34.000000  200.493473
+   36.000000  201.427508
+   38.000000  200.271446
+   40.000000  197.906364
+   42.000000  201.431787
+   44.000000  199.224069
+   46.000000  198.772552
+   48.000000  199.649156
+   50.000000  200.546672

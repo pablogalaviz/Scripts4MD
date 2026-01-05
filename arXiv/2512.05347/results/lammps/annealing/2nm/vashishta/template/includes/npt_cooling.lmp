@@ -1,0 +1,24 @@
+#------------NPT cooling
+log ./results/npt_cooling_${temperature}K.log
+fix             evolution_id all npt temp ${init_temperature} ${temperature} ${temperature_damp} iso ${init_pressure} &
+                ${pressure} ${pressure_damp} drag ${drag_value}
+
+# output
+fix 		    output_id all print ${output_it} "$(step),$(temp),$(press),$(pe),$(ke),$(ecoul),$(epair),$(lx),$(ly),$(lz),$(vol)" &
+                title "time step,temperature,pressure,potential energy,kinetic energy,coulomb energy,pair energy,lx,ly,lz,vol" &
+                file ./results/npt_cooling_${temperature}K.csv screen no
+thermo_style    custom step temp press pe ke ecoul epair lx ly lz cella cellb cellc cellalpha cellbeta cellgamma vol
+thermo          ${output_it}
+
+dump            trj_dump all atom/gz ${output_it} ./results/npt_cooling_${temperature}K.lammpstrj.gz
+
+print "running for ${iterations} iterations"
+print "output every ${output_it} iterations"
+#----------------------------
+run             ${iterations}
+#----------------------------
+
+unfix           evolution_id
+unfix		    output_id
+undump		    trj_dump
+write_restart	./results/npt_cooling_${temperature}K.restart

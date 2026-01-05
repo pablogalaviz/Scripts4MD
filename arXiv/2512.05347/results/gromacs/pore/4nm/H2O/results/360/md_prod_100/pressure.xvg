@@ -1,0 +1,50 @@
+# This file was created Thu Sep  4 03:36:35 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_360/md_prod_100
+# Command line:
+#   gmx energy -f out.edr -o pressure.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Georgetown Riga Oslo Madrid Amsterdam Chisinau Stockholm
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(bar)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Pressure"
+    0.000000  287.657775
+    2.000000  -310.943972
+    4.000000  368.326818
+    6.000000    8.096220
+    8.000000  171.105627
+   10.000000   68.122391
+   12.000000   56.272142
+   14.000000  180.446740
+   16.000000  265.203311
+   18.000000  283.362396
+   20.000000  127.547389
+   22.000000  107.955371
+   24.000000  169.582135
+   26.000000  192.526617
+   28.000000  140.138343
+   30.000000   32.855279
+   32.000000  224.562859
+   34.000000   57.790907
+   36.000000   58.561778
+   38.000000  129.506243
+   40.000000  179.786936
+   42.000000  -22.218030
+   44.000000  472.139873
+   46.000000  209.986759
+   48.000000   81.823637
+   50.000000  210.458643

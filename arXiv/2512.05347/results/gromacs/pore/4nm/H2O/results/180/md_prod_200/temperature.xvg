@@ -1,0 +1,50 @@
+# This file was created Sun Sep  7 11:53:12 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_180/md_prod_200
+# Command line:
+#   gmx energy -f out.edr -o temperature.xvg
+# gmx energy is part of G R O M A C S:
+#
+# Giant Rising Ordinary Mutants for A Clerical Setup
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(K)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Temperature"
+    0.000000  201.580205
+    2.000000  198.438790
+    4.000000  198.074457
+    6.000000  199.692985
+    8.000000  198.942575
+   10.000000  203.639284
+   12.000000  201.505968
+   14.000000  199.864778
+   16.000000  202.274974
+   18.000000  199.676177
+   20.000000  201.240635
+   22.000000  199.124077
+   24.000000  198.733095
+   26.000000  200.963333
+   28.000000  200.605257
+   30.000000  201.449339
+   32.000000  202.762013
+   34.000000  198.449180
+   36.000000  199.930515
+   38.000000  198.353025
+   40.000000  197.730920
+   42.000000  197.188688
+   44.000000  197.883401
+   46.000000  200.769416
+   48.000000  201.761718
+   50.000000  201.293904

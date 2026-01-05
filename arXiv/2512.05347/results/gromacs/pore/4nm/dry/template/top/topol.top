@@ -1,0 +1,18 @@
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.833333
+
+#include "grid.itp"
+#include "tmsg.itp"
+#include "tms.itp"
+#include "tip4p2005f.itp"
+#include "ions.itp"
+[ system ]
+A pore used in molecular simulation plus reservoir
+
+[ molecules ]
+OM 6795
+SI 3105
+SL 360
+SLG 45
+

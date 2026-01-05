@@ -1,0 +1,50 @@
+# This file was created Wed Sep  3 22:35:28 2025
+# Created by:
+#            :-) GROMACS - gmx energy, 2024.3 (double precision) (-:
+# 
+# Executable:   /data1/packages/galavizp/gromacs-2024.3/bin/gmx
+# Data prefix:  /data1/packages/galavizp/gromacs-2024.3
+# Working dir:  /scistor-data1/users/galavizp/projects/DB17405_H2O_nanopore/data/gromacs/pore_4nm_H2O/results/tesla/run1/wm_360/md_prod_200
+# Command line:
+#   gmx energy -f out.edr -o temperature.xvg
+# gmx energy is part of G R O M A C S:
+#
+# GROwing Monsters And Cloning Shrimps
+#
+@    title "GROMACS Energies"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "(K)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "Temperature"
+    0.000000  201.047519
+    2.000000  199.165715
+    4.000000  198.988727
+    6.000000  199.834649
+    8.000000  199.967685
+   10.000000  199.119316
+   12.000000  198.216753
+   14.000000  200.659645
+   16.000000  197.818030
+   18.000000  201.614394
+   20.000000  197.627076
+   22.000000  198.318082
+   24.000000  200.542790
+   26.000000  196.573750
+   28.000000  201.615467
+   30.000000  202.848885
+   32.000000  200.250398
+   34.000000  198.867634
+   36.000000  200.918531
+   38.000000  200.691488
+   40.000000  197.130408
+   42.000000  198.790440
+   44.000000  201.586194
+   46.000000  201.896689
+   48.000000  198.151542
+   50.000000  198.487949

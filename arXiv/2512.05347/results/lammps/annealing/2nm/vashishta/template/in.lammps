@@ -1,0 +1,139 @@
+newton on
+units        metal
+boundary p p p
+atom_style full
+pair_style vashishta
+
+neighbor 1.0 bin
+neigh_modify delay 1 one 4000 binsize 12.0
+variable random_seed equal 45585
+
+#
+#	PORE SETUP
+#
+
+read_data   ./data/SiO2_block_6nm.data
+
+pair_coeff * * ./potential/SiO.1990.vashishta Si O
+
+# Output
+write_data ./results/initial_structure.data
+
+#
+#	ENERGY MINIMIZATION
+#
+variable etol        equal 0.0
+variable ftol        equal 1
+variable maxiter     equal 10000
+variable thermo_iter equal floor(${maxiter}/100)
+variable maxeval     equal 100000
+
+
+# monitoring "fnorm" during minimization
+thermo ${thermo_iter}
+thermo_style custom step temp pe etotal press fnorm
+thermo_modify norm no
+
+fix fiso all box/relax iso 10
+min_style cg
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+unfix fiso
+
+write_data ./results/structure_relaxed.data
+
+#------------Global variables
+variable dt                equal 0.001
+variable temperature_damp  equal ${dt}*100
+variable pressure_damp     equal ${dt}*100
+variable drag_value        equal 0.2
+
+timestep        ${dt}
+run_style       verlet
+
+#------------NPT heating
+variable init_temperature  equal 50.0
+variable temperature       equal   5000.0
+
+variable init_pressure     equal 1.0
+variable pressure          equal 100.0
+
+# time in fs 0.25 ns
+variable iterations        equal   250000
+variable output_it         equal floor(${iterations}/100)
+
+velocity        all create ${init_temperature} ${random_seed} mom yes rot yes dist gaussian
+
+include ./includes/npt_heating.lmp
+
+
+#------------NVT equilibration 1
+
+# time in fs 0.05 ns
+variable iterations        equal   50000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/nvt_equilibration.lmp
+
+#------------NPT equilibration 1
+variable init_pressure     equal 100.0
+variable pressure          equal 100.0
+
+variable init_temperature equal   5000.0
+
+# time in fs 0.05 ns
+variable iterations        equal   50000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/npt_equilibration.lmp
+
+#------------NPT cooling 1
+variable temperature       equal 2000.0
+
+variable init_pressure     equal 100.0
+variable pressure          equal 10.0
+
+# time in fs 0.05 ns
+variable iterations        equal   50000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/npt_cooling.lmp
+
+
+#------------NPT cooling 2
+variable init_temperature  equal 2000.0
+variable temperature       equal 300.0
+
+variable init_pressure     equal 10.0
+variable pressure          equal 1.0
+
+## time in fs 0.2 ns
+variable iterations        equal   200000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/npt_cooling.lmp
+
+#------------NPT equilibration 2
+variable init_pressure     equal 1.0
+variable pressure          equal 1.0
+
+variable init_temperature equal 300.0
+variable temperature      equal 300.0
+
+# time in fs 0.05 ns
+variable iterations        equal   50000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/npt_equilibration.lmp
+
+
+#------------NVT equilibration 2
+variable temperature       equal 300.0
+
+# time in fs 0.05 ns
+variable iterations        equal   50000
+variable output_it         equal floor(${iterations}/100)
+
+include ./includes/nvt_equilibration.lmp
+
+write_data ./results/final_structure.data
+
